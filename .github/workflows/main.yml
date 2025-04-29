@@ -1,26 +1,41 @@
 name: GitlabSync
 
 on:
-  - push
+  push :
+    branches:
+      - main
 
 jobs:
-  sync-to-gitlab:
+  sync:
     runs-on: ubuntu-latest
+
+    env:
+      GITLAB_REPO: https://oauth2:${{ secrets.TARGET_TOKEN }}@gitlab.com/yann_tafou/ChatGPT.git
+
     steps:
-      - name: Git Repo Sync
+      - name: Checkout GitHub repo
         uses: actions/checkout@v3
-       
-      - name: Push to GitLab
-     
-        env: 
-          GITLAB_TOKEN: ${{ secrets.TARGET_TOKEN }}
-          GITLAB_URL: ${{ secrets.TARGET_URL }} 
-        
+
+      - name: Setup Git
         run: |
           git config --global user.name "GitHub Bot"
           git config --global user.email "bot@example.com"
-          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/yann_tafou/chatgpt.git
-          git fetch gitlab main
-          git merge --no-edit gitlab/main --allow-unrelated-histories
-          git push gitlab main 
+
+      - name: Add GitLab remote and fetch
+        run: |
+          git remote add gitlab $GITLAB_REPO
+          git fetch gitlab main || echo "GitLab main branch doesn't exist yet"
+
+      - name: Merge GitLab into GitHub copy (allow unrelated histories on first sync)
+        run: |
+          set -e
+          # Try merge with --allow-unrelated-histories only on first sync
+          git merge gitlab/main --allow-unrelated-histories -m "Merging GitLab main into GitHub main" || {
+            echo "❌ Merge conflict detected. Aborting push."
+            exit 1
+          }
+
+      - name: Push to GitLab
+        run: |
+          git push gitlab main
     
