@@ -21,6 +21,6 @@ jobs:
           git config --global user.email "bot@example.com"
           git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/yann_tafou/chatgpt.git
           git fetch gitlab main
-          git merge --no-edit gitlab/main
+          git merge --no-edit gitlab/main --allow-unrelated-histories
           git push gitlab main 
     
