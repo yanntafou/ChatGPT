@@ -20,5 +20,7 @@ jobs:
           git config --global user.name "GitHub Bot"
           git config --global user.email "bot@example.com"
           git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/yann_tafou/ChatGPT.git
-          git push gitlab main || echo "Merge conflict or push error"
+          git fetch gitlab main
+          git merge --no-edit gitlab/main
+          git push gitlab main 
     
