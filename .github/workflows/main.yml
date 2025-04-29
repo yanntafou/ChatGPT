@@ -17,6 +17,14 @@ jobs:
           GITLAB_URL: ${{ secrets.TARGET_URL }} 
         
         run: |
+          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/yann_tafou/ChatGPT.git
+          git fetch gitlab main
+         
+          git merge --no-edit gitlab/main || {
+            echo "❌ Merge conflict detected! Manual resolution required."
+            exit 1
+          }
+
           git config --global user.name "GitHub Bot"
           git config --global user.email "bot@example.com"
           git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/yann_tafou/ChatGPT.git
