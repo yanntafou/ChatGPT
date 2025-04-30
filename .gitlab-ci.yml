@@ -6,10 +6,17 @@ sync_from_github:
   script:
     - git config --global user.name "GitLab Bot"
     - git config --global user.email "bot@example.com"
+
+    #clone Github repo
     - git clone https://oauth2:${GITHUB_TOKEN}@github.com/yanntafou/ChatGPT github-upstream
     - cd github-upstream
-    - git remote add github ../github-upstream
-    - git pull github main || echo "Conflict detected — manual resolution needed"
+
+    #Adding Gitlab as remote
+    - git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/yann_tafou/ChatGPT.git
+    - git fetch gitlab main || echo "No existing GitLab branch yet"
+
+    - git merge gitlab/main --allow-unrelated-histories -m "Sync from GitHub"
+    - git push gitlab main
 
   #only:
   #- schedules
