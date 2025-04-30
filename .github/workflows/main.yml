@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GITLAB_REPO: https://oauth2:${{ secrets.GITLAB_SECRET }}@gitlab.com/yann_tafou/ChatGPT.git
+      GITLAB_REPO: https://oauth2:${{ secrets.GITLAB_SECRET }}@gitlab.com/yann_tafou/chatgpt.git
 
     steps:
       - name: Checkout GitHub repo
