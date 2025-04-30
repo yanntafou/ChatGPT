@@ -8,7 +8,6 @@ sync_from_github:
 
     #clone Github repo
     - git remote add github https://oauth2:${GITHUB_TOKEN}@github.com/yanntafou/ChatGPT 
-    - git merge github/main --allow-unrelated-histories -m "Sync from GitHub"
     - git push github main
 
   #only:
