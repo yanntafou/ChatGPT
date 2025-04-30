@@ -6,8 +6,8 @@ sync_from_github:
     - git config --global user.email "bot@example.com"
 
     #clone Github repo
-    - git remote add github https://oauth2:${GITHUB_TOKEN}@github.com/yanntafou/ChatGPT 
-    - git push github main
+    - git remote add github https://yann_tafou:$GITHUB_TOKEN@github.com/yanntafou/ChatGPT.git
+    - git push github main 
 
   #only:
   #- schedules
