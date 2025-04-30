@@ -1,0 +1,15 @@
+stages:
+  - sync
+
+sync_from_github:
+  stage: sync
+  script:
+    - git config --global user.name "GitLab Bot"
+    - git config --global user.email "bot@example.com"
+    - git clone https://oauth2:${GITHUB_TOKEN}@${GITHUB_REPO_URL} github-repo github-upstream
+    - cd github-repo
+    - git remote add github ../github-upstream
+    - git pull github main || echo "Conflict detected — manual resolution needed"
+
+only:
+    - schedules
