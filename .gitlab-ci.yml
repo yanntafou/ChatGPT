@@ -4,6 +4,11 @@ sync_from_github:
   script:
     - git config --global user.name "GitLab Bot"
     - git config --global user.email "bot@example.com"
+    
+    - git checkout -b main
+     echo "# Initial commit" > README.md
+    - git add README.md
+    - git commit -m "Initial commit"
 
     #clone Github repo
     - git remote add github https://yanntafou:$GITHUB_TOKEN@github.com/yanntafou/ChatGPT.git
