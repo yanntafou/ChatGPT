@@ -14,7 +14,8 @@ sync_to_github:
 
     # Clone GitLab repo (already done by GitLab CI), add GitHub as remote
     - git remote add github https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/yanntafou/ChatGPT.git
-    - git merge github/main || echo "Merge conflict, manual intervention needed"
+    - git fetch github
+    - git merge github/main 
 
     # Force-push to GitHub (careful if histories diverge)
     - git push github HEAD:main
