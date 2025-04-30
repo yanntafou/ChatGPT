@@ -26,5 +26,7 @@ jobs:
       - name: Add GitLab remote and fetch
         run: |
           git remote add gitlab $GITLAB_REPO
+          git fetch gitlab main || echo "No existing GitLab branch yet"
+          git merge gitlab/main --allow-unrelated-histories
           git push gitlab main
     
