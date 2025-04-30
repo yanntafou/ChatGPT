@@ -6,8 +6,6 @@ sync_from_github:
     - git config --global user.email "bot@example.com"
     
     - git checkout -b main
-     echo "# Initial commit" > README.md
-    - git add README.md
     - git commit -m "Initial commit"
 
     #clone Github repo
