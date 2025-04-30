@@ -11,5 +11,5 @@ sync_from_github:
     - git remote add github ../github-upstream
     - git pull github main || echo "Conflict detected — manual resolution needed"
 
-only:
-    - schedules
+  only:
+  - schedules
