@@ -26,18 +26,5 @@ jobs:
       - name: Add GitLab remote and fetch
         run: |
           git remote add gitlab $GITLAB_REPO
-          git fetch gitlab main || echo "GitLab main branch doesn't exist yet"
-
-      - name: Merge GitLab into GitHub copy (allow unrelated histories on first sync)
-        run: |
-          set -e
-          # Try merge with --allow-unrelated-histories only on first sync
-          git merge gitlab/main --allow-unrelated-histories -m "Merging GitLab main into GitHub main" || {
-            echo "❌ Merge conflict detected. Aborting push."
-            exit 1
-          }
-
-      - name: Push to GitLab
-        run: |
           git push gitlab main
     
