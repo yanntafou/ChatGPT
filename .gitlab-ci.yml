@@ -12,5 +12,5 @@ sync_from_github:
     - git remote add github https://yanntafou:$GITHUB_TOKEN@github.com/yanntafou/ChatGPT.git
     - git push github main 
 
-  #only:
-  #- schedules
+  only:
+  - schedules
