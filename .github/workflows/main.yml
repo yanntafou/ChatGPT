@@ -26,7 +26,7 @@ jobs:
       - name: Skip if last commit was from GitLab
         run: |
           if git log -1 --pretty=%B | grep -q '\[gitlab-sync\]'; then
-            echo "Commit originated from GitLab. Skipping to avoid loop."
+            echo "Commit originated from GitLab. Skipping to avoid loop actions."
             exit 0
           fi
 
