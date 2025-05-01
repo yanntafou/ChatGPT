@@ -54,4 +54,8 @@ jobs:
           else
             echo "✅ Merge successful, no conflicts."
           fi
+
+      
+      - name: Push to GitLab
+        run: git push gitlab main
       
