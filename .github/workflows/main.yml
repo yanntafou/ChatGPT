@@ -30,28 +30,27 @@ jobs:
             exit 0
           fi
 
-      - name: Add GitLab remote and fetch
-        run: |
-          git remote add gitlab $GITLAB_REPO
-          git fetch --prune gitlab main || echo "No existing GitLab branch yet"
-
       - name: Merge from GitLab
         id: merge
         continue-on-error: true
         run: |
-          git fetch --prune gitlab main
-          git merge gitlab/main --no-edit --no-ff
+          echo "Fetching latest from GitLab..."
+          git fetch --prune gitlab main:refs/remotes/gitlab/main
 
-      - name: Show conflicts if merge failed
-        if: steps.merge.outcome == 'failure'
-        run: |
-          echo "Merge conflict detected between GitHub and GitLab:"
-          git diff --name-only --diff-filter=U
-          echo "---- Conflict diff (--theirs):"
-          git diff --theirs || echo "No --theirs diff available"
-          exit 1
+          echo "Attempting merge..."
+          git merge gitlab/main --no-edit
+          MERGE_STATUS=$?
 
-      - name: Push to GitLab
-        if: steps.merge.outcome == 'success'
-        run: git push gitlab main
+          if [ $MERGE_STATUS -ne 0 ]; then
+            echo "❌ Merge conflict detected."
+            echo "Conflicting files:"
+            git diff --name-only --diff-filter=U || echo "No files marked as unresolved."
+
+            echo "Conflict diff (--theirs):"
+            git diff --theirs || echo "No --theirs diff available."
+
+            exit 1
+          else
+            echo "✅ Merge successful, no conflicts."
+          fi
       
