@@ -35,7 +35,7 @@ jobs:
           git remote add gitlab $GITLAB_REPO
           git fetch gitlab main || echo "No existing GitLab branch yet"
 
-      - name: Merge from GitLab and auto-resolve if needed
+      - name: Merge from GitLab
         run: |
           set +e
           git merge gitlab/main --no-edit
@@ -43,7 +43,7 @@ jobs:
           set -e
 
           if [ $MERGE_STATUS -ne 0 ]; then
-            echo "Conflict detected. Auto-resolving using GitLab version."
+            echo "Conflict detected. Please resolve manually."
             exit 1
           
       - name: Push to GitLab
