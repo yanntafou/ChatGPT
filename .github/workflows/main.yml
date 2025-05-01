@@ -1,14 +1,13 @@
 name: GitlabSync
 
 on:
-  push :
+  push:
     branches:
       - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     env:
       GITLAB_REPO: https://oauth2:${{ secrets.GITLAB_SECRET }}@gitlab.com/yann_tafou/chatgpt.git
 
@@ -16,7 +15,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth : 0
+          fetch-depth: 0  # Ensures full commit history for accurate comparisons
 
       - name: Setup Git
         run: |
@@ -30,15 +29,15 @@ jobs:
             exit 0
           fi
 
-      - name: Add GitLab remote and fetch
+      - name: Add GitLab remote and fetch latest changes
         run: |
-          git remote add gitlab $GITLAB_REPO
-          git fetch --prune gitlab main || echo "No existing GitLab branch yet"
+          git remote add gitlab $GITLAB_REPO || echo "GitLab remote already exists"
+          git fetch --prune gitlab main  # Ensures fresh changes are pulled
 
-      - name: Check for Code Changes
+      - name: Detect Code Changes Correctly
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/main gitlab/main)
-      
+          CHANGED_FILES=$(git diff --name-only origin/main..gitlab/main)
+
           if [ -n "$CHANGED_FILES" ]; then
             echo "🚨 Code changes detected! Files modified:"
             echo "$CHANGED_FILES"
@@ -47,24 +46,24 @@ jobs:
             echo "✅ No changes found."
             echo "changed=false" >> $GITHUB_ENV
           fi
-          
+
       - name: Show Exact Differences in Logs
         if: env.changed == 'true'
         run: |
-          echo "Showing detailed modifications:"
+          echo "📄 Showing detailed modifications:"
           
-          for FILE in $(git diff origin/main gitlab/main); do
+          for FILE in $(git diff --name-only origin/main..gitlab/main); do
             echo "🔹 File: $FILE"
             echo "------------------------------------"
-            git diff FETCH_HEAD gitlab/main -- "$FILE"  # **Shows precise changes**
+            git diff origin/main..gitlab/main -- "$FILE"  # **Shows precise changes**
             echo "------------------------------------"
           done
-          
+
       - name: Show Commit History (for better tracking)
         if: env.changed == 'true'
         run: |
-          echo "Recent commits introducing changes:"
-          git log --oneline FETCH_HEAD gitlab/main
+          echo "📜 Recent commits introducing changes:"
+          git log --oneline origin/main..gitlab/main
 
       - name: Merge from GitLab (if approved)
         run: |
