@@ -60,10 +60,7 @@ jobs:
 
       - name: User Decision for Automatic Merge
         if: env.changed == 'true'
-        run: |
-          echo "⚠️ Code changes detected! Please review above changes."
-          echo "Do you want to proceed with automatic merge?"
-          exit 1  # **Stops execution for user review**
+        uses: hmarr/auto-approve-action@v3 
 
       - name: Merge from GitLab (if approved)
         if: env.changed == 'true'
