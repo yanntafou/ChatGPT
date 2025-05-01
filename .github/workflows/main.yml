@@ -33,6 +33,7 @@ jobs:
         run: |
           git remote add gitlab $GITLAB_REPO || echo "GitLab remote already exists"
           git fetch --prune gitlab main
+          git reset --hard gitlab/main  # Ensures GitHub sees latest GitLab
           
           
       - name: Detect Code Changes Correctly
