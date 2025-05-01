@@ -1,13 +1,14 @@
 name: GitlabSync
 
 on:
-  push:
+  push :
     branches:
       - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     env:
       GITLAB_REPO: https://oauth2:${{ secrets.GITLAB_SECRET }}@gitlab.com/yann_tafou/chatgpt.git
 
@@ -15,7 +16,7 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensures full commit history for accurate comparisons
+          fetch-depth : 0
 
       - name: Setup Git
         run: |
@@ -25,40 +26,31 @@ jobs:
       - name: Skip if last commit was from GitLab
         run: |
           if git log -1 --pretty=%B | grep -q '\[gitlab-sync\]'; then
-            echo "Commit originated from GitLab. Skipping to avoid loop actions."
+            echo "Commit originated from GitLab. Skipping to avoid loop."
             exit 0
           fi
 
-      - name: Fetch Latest GitLab Changes
+      - name: Add GitLab remote and fetch
         run: |
-          git remote add gitlab $GITLAB_REPO || echo "GitLab remote already exists"
-          git fetch --prune gitlab main
-          
-          
-          
-      - name: Detect Code Changes Correctly
-        run: |
-          git fetch --prune gitlab main
-          CHANGED_FILES=$(git diff gitlab/main origin/main )
+          git remote add gitlab $GITLAB_REPO
+          git fetch gitlab main || echo "No existing GitLab branch yet"
 
-          if [ -n "$CHANGED_FILES" ]; then
-            echo "Changes detected from GitLab! Modified files:"
-            echo "$CHANGED_FILES"
-            echo "changed=true" >> $GITHUB_ENV
-          else
-            echo "No changes found."
-            echo "changed=false" >> $GITHUB_ENV
-          fi
-
-      - name: Show Exact Differences in Logs
-        if: env.changed == 'true'
+      - name: Merge from GitLab and auto-resolve if needed
         run: |
-          echo "Showing detailed modifications:"
-          git diff gitlab/main origin/main --unified=0  # Highlights exact changes
-         
-
-      - name: Merge from GitLab (if approved)
-        run: |
+          set +e
           git merge gitlab/main --no-edit
-          git push gitlab main
+          MERGE_STATUS=$?
+          set -e
 
+          if [ $MERGE_STATUS -ne 0 ]; then
+            echo "Conflict detected. Auto-resolving using GitLab version."
+            exit 1
+          
+      - name: Push to GitLab
+        run: git push gitlab main
+        
+      - name: Display changes from --theirs
+        if: failure()
+        run: |
+          echo "Displaying changes from --theirs:"
+          git diff --theirs
