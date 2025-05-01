@@ -36,6 +36,7 @@ jobs:
           git fetch gitlab main || echo "No existing GitLab branch yet"
 
       - name: Merge from GitLab and auto-resolve if needed
+        id: merge
         run: |
           set +e
           git merge gitlab/main --no-edit
@@ -43,12 +44,16 @@ jobs:
           set -e
 
           if [ $MERGE_STATUS -ne 0 ]; then
-            echo "Conflict detected. Auto-resolving using GitLab version."
-            git checkout --theirs .
-            git add .
-            git commit -m "[gitlab-sync] Auto-resolved conflict from GitLab"
+            echo "Conflict detected."
+            echo "Please Review code and resolve conflict manually" .
+            git status
+            git diff
+            exit 1
           fi
           
       - name: Push to GitLab
-        run: git push gitlab main
+        if: success()
+        run: |
+          git commit -m "[gitlab-sync] Sync from Github"
+          git push gitlab main
     
