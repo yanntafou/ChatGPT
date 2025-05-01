@@ -35,6 +35,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "Fetching latest from GitLab..."
+          git remote add gitlab $GITLAB_REPO
           git fetch --prune gitlab main
 
           echo "Attempting merge..."
