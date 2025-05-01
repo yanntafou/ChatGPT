@@ -35,19 +35,19 @@ jobs:
           git remote add gitlab $GITLAB_REPO
           git fetch gitlab main || echo "No existing GitLab branch yet"
 
-          
-      - name: Merge from GitLab
-        id: merge
+      - name: Merge from GitLab 
         continue-on-error: true
         run: |
+          set +e
           git merge gitlab/main --no-edit
+          MERGE_STATUS=$?
+          set -e
 
-      - name: Display merge conflicts if any
-        if: steps.merge.outcome == 'failure'
-        run: |
-          echo "Merge conflict detected. Showing diff from GitLab (--theirs):"
-          git diff --theirs
-          exit 1
+          if [ $MERGE_STATUS -ne 0 ]; then
+            echo "Conflict detected. Auto-resolving using GitLab version."
+            git diff --theirs
+            exit 1
+          fi
           
       - name: Push to GitLab
         if: steps.merge.outcome == 'success'
