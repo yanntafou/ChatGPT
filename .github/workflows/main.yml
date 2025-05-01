@@ -48,4 +48,8 @@ jobs:
           echo "Merge conflict detected. Showing diff from GitLab (--theirs):"
           git diff --theirs
           exit 1
+          
+      - name: Push to GitLab
+        if: steps.merge.outcome == 'success'
+        run: git push gitlab main
       
