@@ -32,15 +32,7 @@ sync_to_github:
       git merge github/main --no-edit
       MERGE_STATUS=$?
       set -e
-
-      if [ $MERGE_STATUS -ne 0 ]; then
-        echo "Merge conflict detected. Auto-resolving using GitHub version."
-        git checkout --theirs .
-        git add .
-        git commit -m "[github-sync] Auto-resolved conflict from GitHub"
-      fi
       
-
     # pushing to github after merge success 
     #- git push github HEAD:main
 
