@@ -61,7 +61,6 @@ jobs:
           done
 
       - name: Merge from GitLab (if approved)
-        if: env.changed == 'true'
         run: |
           git merge gitlab/main --no-edit
           git push gitlab main
