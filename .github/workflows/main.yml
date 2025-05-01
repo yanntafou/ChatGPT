@@ -44,13 +44,15 @@ jobs:
 
           if [ $MERGE_STATUS -ne 0 ]; then
             echo "Conflict detected. Please resolve manually."
+            - name: Display changes from --theirs
+              if: failure()
+                run: |
+                  echo "Displaying changes from --theirs:"
+                  git diff --theirs
             exit 1
+          fi
           
       - name: Push to GitLab
         run: git push gitlab main
         
-      - name: Display changes from --theirs
-        if: failure()
-        run: |
-          echo "Displaying changes from --theirs:"
-          git diff --theirs
+      
