@@ -1,0 +1,45 @@
+stages:
+  - sync
+
+sync_to_github:
+  
+  stage: sync
+  
+  image: alpine:latest
+  
+  only:
+    - main 
+  
+  before_script:
+    - apk add --no-cache git bash
+    - git config --global user.name "GitLab Sync Bot"
+    - git config --global user.email "ci@gitlab.com"
+  
+  script:
+    - git remote add github https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/yanntafou/ChatGPT.git
+    - git fetch github main || echo "No GitHub main branch yet"
+    
+    # Prevent infinite sync loop
+    - |
+      if git log -1 --pretty=%B | grep -q '\[github-sync\]'; then
+        echo "Commit came from GitHub sync. Skipping to avoid loop."
+        exit 0
+      fi
+    
+    # Managing merge sync issue
+    - |
+      set +e
+      git merge github/main --no-edit
+      MERGE_STATUS=$?
+      set -e
+
+      if [ $MERGE_STATUS -ne 0 ]; then
+        echo "Merge conflict detected. Auto-resolving using GitHub version."
+        git checkout --theirs .
+        git add .
+        git commit -m "[github-sync] Auto-resolved conflict from GitHub"
+      fi
+
+    #pushing to github after merge success 
+    - git push github HEAD:main
+
