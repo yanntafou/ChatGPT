@@ -38,6 +38,7 @@ jobs:
           
       - name: Detect Code Changes Correctly
         run: |
+          git fetch --prune gitlab main
           CHANGED_FILES=$(git diff gitlab/main origin/main )
 
           if [ -n "$CHANGED_FILES" ]; then
