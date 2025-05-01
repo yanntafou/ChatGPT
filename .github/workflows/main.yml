@@ -37,7 +37,7 @@ jobs:
 
       - name: Check for Code Changes
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/main..gitlab/main)
+          CHANGED_FILES=$(git diff --name-only FETCH_HEAD gitlab/main)
       
           if [ -n "$CHANGED_FILES" ]; then
             echo "🚨 Code changes detected! Files modified:"
@@ -53,7 +53,7 @@ jobs:
         run: |
           echo "Showing detailed modifications:"
           
-          for FILE in $(git diff --name-only origin/main..gitlab/main); do
+          for FILE in $(git diff --name-only FETCH_HEAD gitlab/main); do
             echo "🔹 File: $FILE"
             echo "------------------------------------"
             git diff FETCH_HEAD gitlab/main -- "$FILE"  # **Shows precise changes**
@@ -63,8 +63,8 @@ jobs:
       - name: Show Commit History (for better tracking)
         if: env.changed == 'true'
         run: |
-          echo "📜 Recent commits introducing changes:"
-          git log --oneline origin/main..gitlab/main
+          echo "Recent commits introducing changes:"
+          git log --oneline FETCH_HEAD gitlab/main
 
       - name: Merge from GitLab (if approved)
         run: |
