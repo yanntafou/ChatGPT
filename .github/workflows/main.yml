@@ -49,6 +49,6 @@ jobs:
             git commit -m "[gitlab-sync] Auto-resolved conflict from GitLab"
           fi
           
-          - name: Push to GitLab
-            run: git push gitlab main
+      - name: Push to GitLab
+        run: git push gitlab main
     
