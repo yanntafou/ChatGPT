@@ -33,7 +33,7 @@ jobs:
       - name: Add GitLab remote and fetch
         run: |
           git remote add gitlab $GITLAB_REPO
-          git fetch gitlab main || echo "No existing GitLab branch yet"
+          git fetch --prune gitlab main || echo "No existing GitLab branch yet"
 
       - name: Merge from GitLab
         id: merge
