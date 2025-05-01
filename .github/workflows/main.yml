@@ -44,7 +44,7 @@ jobs:
 
           if [ $MERGE_STATUS -ne 0 ]; then
             echo "❌ Merge conflict detected."
-            echo "Conflicting files:"
+            echo "Conflicting files detected:"
             git diff --name-only --diff-filter=U || echo "No files marked as unresolved."
 
             echo "Conflict diff (--theirs):"
