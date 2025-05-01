@@ -37,7 +37,7 @@ jobs:
 
       - name: Check for Code Changes
         run: |
-          CHANGED_FILES=$(git diff --name-only HEAD gitlab/main)
+          CHANGED_FILES=$(git diff --name-only FETCH_HEAD gitlab/main)
       
           if [ -n "$CHANGED_FILES" ]; then
             echo "🚨 Code changes detected! Files modified:"
@@ -48,24 +48,17 @@ jobs:
             echo "changed=false" >> $GITHUB_ENV
           fi
           
-      - name: detailed code changes
+      - name: Show Exact Differences in Logs
         if: env.changed == 'true'
         run: |
-          git fetch gitlab main
-          CHANGED_FILES=$(git diff --name-only HEAD gitlab/main)
-
-          if [ -n "$CHANGED_FILES" ]; then
-            echo "Displaying detailed modifications:"
-            
-            for FILE in $CHANGED_FILES; do
-              echo "🔹 File: $FILE"
-              echo "------------------------------------"
-              git diff HEAD gitlab/main -- "$FILE"
-              echo "------------------------------------"
-            done
-          else
-            echo "No changes Found"
-          fi
+          echo "📄 Showing detailed modifications:"
+          
+          for FILE in $(git diff --name-only FETCH_HEAD gitlab/main); do
+            echo "🔹 File: $FILE"
+            echo "------------------------------------"
+            git diff FETCH_HEAD gitlab/main -- "$FILE"  # **Shows precise changes**
+            echo "------------------------------------"
+          done
 
       - name: Merge from GitLab (if approved)
         if: env.changed == 'true'
