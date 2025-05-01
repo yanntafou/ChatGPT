@@ -32,7 +32,6 @@ jobs:
 
       - name: Merge from GitLab
         id: merge
-        continue-on-error: true
         run: |
           echo "Fetching latest from GitLab..."
           git remote add gitlab $GITLAB_REPO
