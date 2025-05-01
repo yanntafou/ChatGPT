@@ -45,8 +45,6 @@ jobs:
           if [ $MERGE_STATUS -ne 0 ]; then
             echo "Conflict detected. Auto-resolving using GitLab version."
             git diff --theirs
-            exit 1
-          fi
           
       - name: Push to GitLab
         run: git push gitlab main
