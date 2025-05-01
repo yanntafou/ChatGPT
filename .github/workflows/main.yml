@@ -36,7 +36,6 @@ jobs:
           git fetch gitlab main || echo "No existing GitLab branch yet"
 
       - name: Merge from GitLab 
-        continue-on-error: true
         run: |
           set +e
           git merge gitlab/main --no-edit
