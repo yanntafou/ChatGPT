@@ -50,6 +50,5 @@ jobs:
           fi
           
       - name: Push to GitLab
-        if: steps.merge.outcome == 'success'
         run: git push gitlab main
       
