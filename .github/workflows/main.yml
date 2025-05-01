@@ -29,41 +29,31 @@ jobs:
             exit 0
           fi
 
-      - name: Add GitLab remote and fetch latest changes
+      - name: Fetch Latest GitLab Changes
         run: |
           git remote add gitlab $GITLAB_REPO || echo "GitLab remote already exists"
-          git fetch --prune gitlab main  # Ensures fresh changes are pulled
-
+          git fetch --prune gitlab main
+          git reset --hard gitlab/main  # Ensures GitHub sees latest GitLab changes
+          
       - name: Detect Code Changes Correctly
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/main..gitlab/main)
+          CHANGED_FILES=$(git diff --name-only gitlab/main origin/main )
 
           if [ -n "$CHANGED_FILES" ]; then
-            echo "🚨 Code changes detected! Files modified:"
+            echo "Changes detected from GitLab! Modified files:"
             echo "$CHANGED_FILES"
             echo "changed=true" >> $GITHUB_ENV
           else
-            echo "✅ No changes found."
+            echo "No changes found."
             echo "changed=false" >> $GITHUB_ENV
           fi
 
       - name: Show Exact Differences in Logs
         if: env.changed == 'true'
         run: |
-          echo "📄 Showing detailed modifications:"
-          
-          for FILE in $(git diff --name-only origin/main..gitlab/main); do
-            echo "🔹 File: $FILE"
-            echo "------------------------------------"
-            git diff origin/main..gitlab/main -- "$FILE"  # **Shows precise changes**
-            echo "------------------------------------"
-          done
-
-      - name: Show Commit History (for better tracking)
-        if: env.changed == 'true'
-        run: |
-          echo "📜 Recent commits introducing changes:"
-          git log --oneline origin/main..gitlab/main
+          echo "Showing detailed modifications:"
+          git diff gitlab/main origin/main --unified=0  # Highlights exact changes
+         
 
       - name: Merge from GitLab (if approved)
         run: |
