@@ -52,7 +52,8 @@ jobs:
           fi
           
       - name: Push to GitLab
-        if: success()
+        if: git diff --quiet; then
+          echo "No changes to commit - skipping push"
         run: |
           git commit -m "[gitlab-sync] Sync from Github"
           git push gitlab main
