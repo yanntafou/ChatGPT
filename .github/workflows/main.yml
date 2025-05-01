@@ -51,7 +51,7 @@ jobs:
       - name: Show Exact Differences in Logs
         if: env.changed == 'true'
         run: |
-          echo "📄 Showing detailed modifications:"
+          echo "Showing detailed modifications:"
           
           for FILE in $(git diff --name-only FETCH_HEAD gitlab/main); do
             echo "🔹 File: $FILE"
