@@ -40,7 +40,7 @@ jobs:
         continue-on-error: true
         run: |
           git fetch --prune gitlab main
-          git merge gitlab/main --no-edit
+          git merge gitlab/main --no-edit --no-ff
 
       - name: Show conflicts if merge failed
         if: steps.merge.outcome == 'failure'
