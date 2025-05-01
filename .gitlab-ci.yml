@@ -35,7 +35,6 @@ sync_to_github:
 
       if [ $MERGE_STATUS -ne 0 ]; then
         echo "Merge conflict detected."
-        echo "Fix conflict file and try by commit"
         exit 1 
       fi
 
