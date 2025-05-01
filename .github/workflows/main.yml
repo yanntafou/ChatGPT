@@ -39,7 +39,7 @@ jobs:
         id: merge
         continue-on-error: true
         run: |
-          git fetch --prune gitlab main:refs/remotes/gitlab/main
+          git fetch --prune gitlab main
           git merge gitlab/main --no-edit
 
       - name: Show conflicts if merge failed
