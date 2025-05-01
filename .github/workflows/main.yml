@@ -48,19 +48,24 @@ jobs:
             echo "changed=false" >> $GITHUB_ENV
           fi
           
-      - name: Show Content of Changed Files
+      - name: detailed code changes
         if: env.changed == 'true'
         run: |
-          for FILE in $(git diff --name-only HEAD gitlab/main); do
-            echo "🔹 File: $FILE"
-            echo "------------------------------------"
-            cat "$FILE"  # **Outputs file content**
-            echo "------------------------------------"
-          done
+          git fetch gitlab main
+          CHANGED_FILES=$(git diff --name-only HEAD gitlab/main)
 
-      - name: User Decision for Automatic Merge
-        if: env.changed == 'true'
-        uses: hmarr/auto-approve-action@v3 
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "Displaying detailed modifications:"
+            
+            for FILE in $CHANGED_FILES; do
+              echo "🔹 File: $FILE"
+              echo "------------------------------------"
+              git diff HEAD gitlab/main -- "$FILE"
+              echo "------------------------------------"
+            done
+          else
+            echo "No changes Found"
+          fi
 
       - name: Merge from GitLab (if approved)
         if: env.changed == 'true'
