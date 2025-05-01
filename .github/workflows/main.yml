@@ -23,10 +23,32 @@ jobs:
           git config --global user.name "GitHub Bot"
           git config --global user.email "bot@example.com"
 
+      - name: Skip if last commit was from GitLab
+        run: |
+          if git log -1 --pretty=%B | grep -q '\[gitlab-sync\]'; then
+            echo "Commit originated from GitLab. Skipping to avoid loop."
+            exit 0
+          fi
+
       - name: Add GitLab remote and fetch
         run: |
           git remote add gitlab $GITLAB_REPO
           git fetch gitlab main || echo "No existing GitLab branch yet"
-          git merge gitlab/main --allow-unrelated-histories
-          git push gitlab main
+
+      - name: Merge from GitLab and auto-resolve if needed
+        run: |
+          set +e
+          git merge gitlab/main --no-edit
+          MERGE_STATUS=$?
+          set -e
+
+          if [ $MERGE_STATUS -ne 0 ]; then
+            echo "Conflict detected. Auto-resolving using GitLab version."
+            git checkout --theirs .
+            git add .
+            git commit -m "[gitlab-sync] Auto-resolved conflict from GitLab"
+          fi
+          
+          - name: Push to GitLab
+            run: git push gitlab main
     
