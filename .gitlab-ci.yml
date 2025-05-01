@@ -34,10 +34,9 @@ sync_to_github:
       set -e
 
       if [ $MERGE_STATUS -ne 0 ]; then
-        echo "Merge conflict detected. Auto-resolving using GitHub version."
-        git checkout --theirs .
-        git add .
-        git commit -m "[github-sync] Auto-resolved conflict from GitHub"
+        echo "Merge conflict detected."
+        echo "Fix conflict file and try by commit"
+        exit 1 
       fi
 
     #pushing to github after merge success 
