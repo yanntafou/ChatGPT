@@ -64,5 +64,10 @@ jobs:
 
       
       - name: Push to GitLab
-        run: git push gitlab main
+        run: |
+          cd gitlab_sync
+          git checkout -B github-synced
+          git add .
+          git commit -m "Sync: Github to Gitlab mapped"
+          git push gitlab main github-synced
       
