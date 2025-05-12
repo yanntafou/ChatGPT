@@ -31,8 +31,8 @@ jobs:
           fi
       - name : Match GitLab Structure
         run: |
-          mkdir -p gitlab_sync/backend/
-          mkdir -p gitlab_sync/frontend/
+          mkdir -p backend/
+          mkdir -p frontend/
         
           #map Github to GitLal layout
           cp -r src/assets/* backend/
