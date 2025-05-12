@@ -35,8 +35,8 @@ jobs:
           mkdir -p gitlab_sync/frontend/
         
           #map Github to GitLal layout
-          cp -r src/assets/* gitlab_sync/backend/
-          cp -r public/* gitlab_sync/frontend/
+          cp -r src/assets/* backend/
+          cp -r public/* frontend/
           
       - name: Merge from GitLab
         id: merge
@@ -65,7 +65,6 @@ jobs:
       
       - name: Push to GitLab
         run: |
-          cd gitlab_sync
           git add .
           git commit -m "Sync: Github to Gitlab mapped"
           git push gitlab main
