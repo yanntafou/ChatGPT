@@ -29,7 +29,15 @@ jobs:
             echo "Commit originated from GitLab. Skipping to avoid loop."
             exit 0
           fi
-
+      - name : Match GitLab Structure
+        run: |
+          mkdir -p gitlab_sync/backend/
+          mkdir -p gitlab_sync/frontend/
+        
+          #map Github to GitLal layout
+          cp -r src/assets/* gitlab_sync/backend/
+          cp -r public/* gitlab_sync/frontend/
+          
       - name: Merge from GitLab
         id: merge
         run: |
