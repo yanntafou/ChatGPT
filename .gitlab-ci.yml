@@ -5,10 +5,7 @@ sync_to_github:
   
   stage: sync
   
-  image: alpine:latest
-  
-  only:
-    - main 
+  image: alpine:latest 
   
   before_script:
     - apk add --no-cache git bash
@@ -40,4 +37,7 @@ sync_to_github:
 
     #pushing to github after merge success 
     - git push github HEAD:main
+
+  only:
+  - schedules
 
